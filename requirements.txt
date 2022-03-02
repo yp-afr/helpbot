@@ -1,0 +1,6 @@
+aiogram==2.9
+redis
+aioredis
+gino~=1.0.1
+environs~=9.5.0
+SQLAlchemy~=1.3.24
