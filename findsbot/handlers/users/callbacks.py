@@ -42,7 +42,7 @@ async def block_user_func(call: types.CallbackQuery, callback_data: dict):
                     await bot.delete_message(message_id=message.message_id, chat_id=message.chat_id)
                     await delete_record(record.id)
                 except Exception as ex:
-                    pass
+                    logging.error(ex)
         chat_id = types.User.get_current().id
         msg_id = call.message.message_id
         await bot.delete_message(chat_id, msg_id)
