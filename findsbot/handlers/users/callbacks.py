@@ -37,12 +37,13 @@ async def block_user_func(call: types.CallbackQuery, callback_data: dict):
         records = await get_records_by_author(chat_id)
         if records:
             for record in records:
-                message = await get_messages_by_id(record.id)
-                try:
-                    await bot.delete_message(message_id=message.message_id, chat_id=message.chat_id)
-                    await delete_record(record.id)
-                except Exception as ex:
-                    logging.error(ex)
+                messages = await get_messages_by_id(record.id)
+                for m in messages:
+                    try:
+                        await bot.delete_message(message_id=m.message_id, chat_id=m.chat_id)
+                        await delete_record(record.id)
+                    except Exception as ex:
+                        logging.error(ex)
         chat_id = types.User.get_current().id
         msg_id = call.message.message_id
         await bot.delete_message(chat_id, msg_id)
