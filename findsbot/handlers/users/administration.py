@@ -139,8 +139,8 @@ async def getting_contact(message: types.Message, state: FSMContext):
     await state.finish()
 
 
-@dp.message_handler(TextButton('button_show_blocked'))
-async def show_all_blocked(message: types.Message):
+@dp.message_handler(TextButton('button_show_blocked'), admin_check=True)
+async def show_all_blocked_users(message: types.Message):
     try:
         blocked = await get_blocked()
         if blocked:
