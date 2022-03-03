@@ -51,7 +51,7 @@ async def delete_post(call: types.CallbackQuery, callback_data: dict):
     if messages:
         for m in messages:
             try:
-                bot.delete_message(m.chat_id, m.message_id)
+                await bot.delete_message(m.chat_id, m.message_id)
             except Exception as ex:
                 pass
     await delete_message_by_record_id(item_id)
@@ -77,11 +77,11 @@ async def change_caption(message: types.Message, state: FSMContext):
             if record.photo:
                 if messages:
                     for m in messages:
-                        bot.edit_message_caption(chat_id=messages.chat_id, caption=message.text)
+                        await bot.edit_message_caption(chat_id=messages.chat_id, caption=message.text)
             else:
                 if messages:
                     for m in messages:
-                        bot.edit_message_text(chat_id=messages.chat_id, text=message.text)
+                        await bot.edit_message_text(chat_id=messages.chat_id, text=message.text)
 
         await message.answer(text=await get_name("successful_change_text"))
     except Exception as ex:
