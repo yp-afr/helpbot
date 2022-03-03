@@ -1,6 +1,7 @@
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, ReplyKeyboardMarkup
 from aiogram.utils.callback_data import CallbackData
 
+from findsbot.handlers.users.callbacks import del_block
 from findsbot.utils.dp_api.commands import get_name
 
 delete_admin_cd = CallbackData("del_admin", "phone_number")
@@ -11,6 +12,12 @@ delete_info_cd = CallbackData("del_info", "id")
 async def tr_contact_keyboard(id):
     markup = InlineKeyboardMarkup()
     markup.insert(InlineKeyboardButton(text="Видалити", callback_data=delete_contact_cd.new(id=id)))
+    return markup
+
+
+async def blocked_key(id):
+    markup = InlineKeyboardMarkup()
+    markup.insert(InlineKeyboardButton(text="Видалити", callback_data=del_block.new(blocked_id=id)))
     return markup
 
 

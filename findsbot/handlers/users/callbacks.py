@@ -6,12 +6,23 @@ from aiogram.utils.callback_data import CallbackData
 
 from findsbot.loader import dp, bot
 from findsbot.states.ChangeItem import ChangeItem
-from findsbot.utils.dp_api.commands import delete_record, change_record, get_name, add_user_to_block_list
+from findsbot.utils.dp_api.commands import delete_record, change_record, get_name, add_user_to_block_list, \
+    del_blocked_user
 
 del_post = CallbackData("delete", "item_id")
 change_post_cb = CallbackData("change", "item_id")
 del_review = CallbackData("delete_review", "review_id")
 block_user = CallbackData("block_user", "user_id")
+del_block = CallbackData("delete_block_user", "blocked_id")
+
+
+@dp.callback_query_handler(del_block.filter())
+async def del_blocked(call: types.CallbackQuery, callback_data: dict):
+    blocked_id = int(callback_data.get("blocked_id"))
+    await del_blocked_user(blocked_id)
+    chat_id = types.User.get_current().id
+    msg_id = call.message.message_id
+    await bot.delete_message(chat_id, msg_id)
 
 
 @dp.callback_query_handler(block_user.filter())

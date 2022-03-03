@@ -75,6 +75,20 @@ async def add_user_to_block_list(user_id: str):
         logging.info(ex)
 
 
+async def del_blocked_user(blocked_id):
+    try:
+        await Block.delete.where(Block.id == int(blocked_id)).gino.status()
+    except Exception as ex:
+        logging.error(ex)
+
+
+async def get_blocked():
+    try:
+        return await Block.query.gino.all()
+    except Exception as ex:
+        logging.error(ex)
+
+
 async def get_blocked_users() -> list:
     try:
         blocks = await Block.query.gino.all()

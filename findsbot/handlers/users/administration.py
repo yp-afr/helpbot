@@ -1,3 +1,4 @@
+import asyncio
 import logging
 
 from aiogram import types
@@ -7,13 +8,13 @@ from findsbot.filters import TextButton
 from findsbot.keyboards.default.Administration import administration
 from findsbot.keyboards.default.main_menus import admin_main_menu
 from findsbot.keyboards.inline.administration_funcs import contact_keyboard, new_admin_keyboard, delete_admin_cd, \
-    tr_contact_keyboard, delete_contact_cd
-from findsbot.loader import dp
+    tr_contact_keyboard, delete_contact_cd, blocked_key
+from findsbot.loader import dp, bot
 from findsbot.states.AddContact import AddingContact
 from findsbot.states.AddInfo import AddingInfo
 from findsbot.states.AddingAdmin import AddingAdmin
 from findsbot.utils.dp_api.commands import get_all_admins, add_admin, del_admin, get_name, add_contactt, \
-    get_all_contacts, delete_contact, add_iinfo
+    get_all_contacts, delete_contact, add_iinfo, get_blocked, get_all_users
 
 
 @dp.message_handler(TextButton("button_admin_text"), admin_check=True)
@@ -62,6 +63,17 @@ async def enter_info_text(message: types.Message, state: FSMContext):
         await add_iinfo(info=message.text)
         markup = await administration()
         await message.answer("Інформація додана!", reply_markup=markup)
+        users = await get_all_users()
+        it = 0
+        await message.answer(f"Запускаю рассылку....", reply_markup=markup)
+
+        for user in users:
+            try:
+                await bot.send_message(chat_id=user, text=message.text)
+                it += 1
+            except Exception as ex:
+                logging.info(ex)
+            await asyncio.sleep(0.4)
     except Exception as ex:
         markup = await administration()
         await message.answer(f"Помилка додавання!", reply_markup=markup)
@@ -125,6 +137,22 @@ async def getting_contact(message: types.Message, state: FSMContext):
         await message.answer(f"Ошибка добавления!", reply_markup=markup)
         logging.error(ex)
     await state.finish()
+
+
+@dp.message_handler(TextButton('button_show_blocked'))
+async def show_all_blocked(message: types.Message):
+    try:
+        blocked = await get_blocked()
+        if blocked:
+            for b in blocked:
+                markup = await blocked_key(b.id)
+                await message.answer(b.name, reply_markup=markup)
+        else:
+            await message.answer('Заблоковані відсутні')
+    except Exception as ex:
+        markup = await administration()
+        await message.answer(f"Помилка виконання!", reply_markup=markup)
+        logging.error(ex)
 
 
 @dp.callback_query_handler(delete_admin_cd.filter())
