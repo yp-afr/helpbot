@@ -7,7 +7,7 @@ from aiogram.utils.callback_data import CallbackData
 from findsbot.loader import dp, bot
 from findsbot.states.ChangeItem import ChangeItem
 from findsbot.utils.dp_api.commands import delete_record, change_record, get_name, add_user_to_block_list, \
-    del_blocked_user, get_messages_by_id, delete_message_by_record_id, get_record_by_id
+    del_blocked_user, get_messages_by_id, delete_message_by_record_id, get_record_by_id, get_records_by_author
 
 del_post = CallbackData("delete", "item_id")
 change_post_cb = CallbackData("change", "item_id")
@@ -34,6 +34,18 @@ async def block_user_func(call: types.CallbackQuery, callback_data: dict):
         chat_id = user_id
         msg = "Вас було заблоковано."
         await bot.send_message(chat_id, msg, reply_markup=None)
+        records = await get_records_by_author(chat_id)
+        if records:
+            for record in records:
+                message = await get_messages_by_id(record.id)
+                try:
+                    await bot.delete_message(message_id=message.message_id, chat_id=message.chat_id)
+                    await delete_record(record.id)
+                except Exception as ex:
+                    pass
+        chat_id = types.User.get_current().id
+        msg_id = call.message.message_id
+        await bot.delete_message(chat_id, msg_id)
 
     except Exception as ex:
         logging.info(ex)

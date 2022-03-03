@@ -236,6 +236,13 @@ async def get_messages_by_id(record_id):
     except Exception as ex:
         logging.error(ex)
 
+
+async def get_records_by_author(id):
+    try:
+        return await Records.query.where(Records.author_id == id).gino.all()
+    except Exception as ex:
+        logging.error(ex)
+
 async def get_record_by_id(id):
     try:
         return await Records.query.where(Records.id == id).gino.all()
