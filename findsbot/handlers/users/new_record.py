@@ -134,8 +134,8 @@ async def with_photo(message: types.Message, state: FSMContext):
         else:
             markup = await main_menu()
             await message.answer(text=await get_name("post_success_text"), reply_markup=markup)
-        await mailing(caption, type_finds, category, photo, username)
-        await moderation(caption, type_finds, category, photo, username, record_id, user_id)
+        await mailing(caption, type_finds, category, photo, username, record_id)
+        await moderation(caption, type_finds, category, photo, username, record_id, user_id, record_id)
     await state.finish()
 
 
@@ -159,6 +159,6 @@ async def without_photo(call: types.CallbackQuery, state: FSMContext):
         else:
             markup = await main_menu()
             await call.message.answer(text=await get_name("post_success_text"), reply_markup=markup)
-        await mailing(caption, type_finds, category, None, username)
-        await moderation(caption, type_finds, category, None, username, record_id, user_id)
+        await mailing(caption, type_finds, category, None, username, record_id)
+        await moderation(caption, type_finds, category, None, username, record_id, user_id, record_id)
     await state.finish()

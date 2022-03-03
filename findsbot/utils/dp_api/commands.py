@@ -10,6 +10,7 @@ from findsbot.utils.dp_api.schemas.contacts import Contact
 from findsbot.utils.dp_api.schemas.info import Info
 from findsbot.utils.dp_api.schemas.names import Names
 from findsbot.utils.dp_api.schemas.records import Records
+from findsbot.utils.dp_api.schemas.records_users import RecordsUsers
 from findsbot.utils.dp_api.schemas.reviews import Reviews
 from findsbot.utils.dp_api.schemas.users import User
 
@@ -216,5 +217,34 @@ async def get_all_users() -> List:
         for user in users:
             ids.append(user.user_id)
         return ids
+    except Exception as ex:
+        logging.info(ex)
+
+
+async def add_message(record_id: int, chat_id: int, message_id: int):
+    try:
+        record = RecordsUsers(record_id=record_id, chat_id=chat_id, message_id=message_id)
+        record_created = await record.create()
+        return record_created.id
+    except Exception as ex:
+        logging.error(ex)
+
+
+async def get_messages_by_id(record_id):
+    try:
+        return await RecordsUsers.query.where(RecordsUsers.record_id == record_id).gino.all()
+    except Exception as ex:
+        logging.error(ex)
+
+async def get_record_by_id(id):
+    try:
+        return await Records.query.where(Records.id == id).gino.all()
+    except Exception as ex:
+        logging.error(ex)
+
+
+async def delete_message_by_record_id(id: int):
+    try:
+        await RecordsUsers.delete.where(RecordsUsers.record_id == id).gino.status()
     except Exception as ex:
         logging.info(ex)
